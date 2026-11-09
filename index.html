@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les nombres relatifs – 5e (version adaptée)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pos:#c62828; --neg:#1d4ed8; --zero:#2e7d32;
+  --bg:#fdf8ec; --card:#ffffff; --ink:#1f2328; --soft:#f4ecd6; --line:#e3d9bf;
+  --ok:#2e7d32; --okbg:#e7f5e8; --ko:#a16207; --kobg:#fff4dc; --accent:#6d28d9;
+  --fs:20px;
+}
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Lexend,Verdana,Arial,sans-serif;
+  line-height:1.75;letter-spacing:.02em;word-spacing:.12em}
+body.spacious{line-height:2.15;letter-spacing:.07em;word-spacing:.3em}
+.wrap{max-width:860px;margin:0 auto;padding:0 14px 60px}
+header{background:var(--accent);color:#fff;padding:14px 16px 10px}
+header h1{margin:0;font-size:1.35rem;line-height:1.3}
+header p{margin:2px 0 0;font-size:.85rem;opacity:.9}
+.settings{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.settings button{background:rgba(255,255,255,.18);color:#fff;border:2px solid rgba(255,255,255,.5);
+  border-radius:12px;padding:6px 12px;font:inherit;font-size:.8rem;cursor:pointer}
+.settings button.on{background:#fff;color:var(--accent)}
+nav{position:sticky;top:0;z-index:5;background:var(--bg);display:grid;grid-template-columns:repeat(4,1fr);
+  gap:6px;padding:10px 0;border-bottom:2px solid var(--line)}
+nav button{font:inherit;font-size:.78rem;font-weight:600;padding:10px 4px;border-radius:14px;border:2px solid var(--line);
+  background:#fff;color:var(--ink);cursor:pointer;line-height:1.3}
+nav button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.panel{display:none;padding-top:16px}
+.panel.active{display:block}
+h2{font-size:1.25rem;line-height:1.35;margin:.4em 0 .6em}
+h3{font-size:1.05rem;margin:1em 0 .4em}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:16px}
+.retiens{background:#fff8e1;border:3px solid #f2b600;border-radius:16px;padding:12px 16px;margin:12px 0}
+.retiens .lab{display:inline-block;background:#f2b600;color:#3b2a00;font-weight:700;border-radius:10px;padding:0 10px;font-size:.8rem;margin-bottom:4px}
+.astuce{background:#eef4ff;border-left:6px solid var(--neg);border-radius:12px;padding:10px 14px;margin:12px 0}
+.methode{background:#f3ecff;border-left:6px solid var(--accent);border-radius:12px;padding:10px 14px;margin:12px 0}
+.methode ol{margin:.2em 0;padding-left:1.4em}
+.num{font-weight:700;white-space:nowrap}
+.num.pos{color:var(--pos)} .num.neg{color:var(--neg)} .num.zero{color:var(--zero)}
+.big{font-size:1.6rem;text-align:center;margin:10px 0;letter-spacing:.08em}
+.blank{display:inline-block;min-width:1.6em;border-bottom:3px dashed #888;color:#888;text-align:center}
+.anat{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.anat .box{text-align:center}
+.anat .cells{display:flex;font-size:2rem;font-weight:700}
+.anat .cells span{border:3px solid #999;padding:0 14px;min-width:1.6em;text-align:center;background:#fff}
+.anat .cells span:first-child{border-radius:12px 0 0 12px;background:#fff3c4}
+.anat .cells span:last-child{border-radius:0 12px 12px 0;border-left:none}
+.anat small{display:flex;justify-content:space-between;font-size:.7rem;color:#555;gap:8px}
+.svgwrap{background:#fff;border:2px solid var(--line);border-radius:14px;padding:6px;margin:12px 0;overflow:hidden}
+.svgwrap svg{width:100%;height:auto;display:block}
+.svgwrap.plane{max-width:440px;margin-left:auto;margin-right:auto}
+.hit{cursor:pointer}
+.hit:hover{fill:rgba(109,40,217,.15)}
+.btn{font:inherit;font-weight:600;font-size:.9rem;border:none;border-radius:14px;padding:12px 18px;cursor:pointer;
+  background:var(--accent);color:#fff;margin:6px 6px 0 0}
+.btn.light{background:#fff;color:var(--accent);border:2px solid var(--accent)}
+.btn:disabled{opacity:.35;cursor:default}
+.say{font:inherit;font-size:.85rem;border:2px solid var(--line);background:#fff;border-radius:12px;padding:4px 10px;cursor:pointer;flex-shrink:0}
+.fhead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.8rem;color:#555}
+.dots{display:flex;gap:6px;justify-content:center;margin:10px 0}
+.dots span{width:14px;height:14px;border-radius:50%;background:var(--line);cursor:pointer}
+.dots span.on{background:var(--accent)}
+.fnav{display:flex;justify-content:space-between;flex-wrap:wrap}
+/* Exercices */
+.menu{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:620px){.menu{grid-template-columns:1fr 1fr}}
+.mitem{font:inherit;text-align:left;background:#fff;border:2px solid var(--line);border-radius:18px;padding:14px 16px;cursor:pointer;color:var(--ink)}
+.mitem:hover{border-color:var(--accent)}
+.mitem .e{font-size:1.6rem}
+.mitem b{display:block;font-size:1rem}
+.mitem small{color:#666;font-size:.75rem}
+.qcard{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px}
+.qhead{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
+.qtext{margin:0;font-size:1.05rem;flex:1}
+.choices{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0 4px}
+.choice{font:inherit;font-size:1.25rem;font-weight:700;min-width:5.5em;padding:12px 16px;border-radius:16px;border:3px solid var(--line);background:#fffdf7;cursor:pointer;color:var(--ink)}
+.choice:hover:not(:disabled){border-color:var(--accent)}
+.choice.good{border-color:var(--ok);background:var(--okbg)}
+.choice.bad{border-color:var(--ko);background:var(--kobg)}
+.choice:disabled{cursor:default}
+.hint{font-size:.8rem;color:#555;margin:4px 0}
+.orderline{min-height:3em;border:3px dashed var(--line);border-radius:14px;padding:8px 12px;font-size:1.3rem;margin:12px 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.orderline .lt{color:#777;font-weight:700}
+.feedback{margin-top:14px;border-radius:14px;padding:0}
+.feedback.ok{background:var(--okbg);border:2px solid var(--ok);padding:10px 14px}
+.feedback.ko{background:var(--kobg);border:2px solid var(--ko);padding:10px 14px}
+.fbtitle{font-weight:700;margin:0 0 4px}
+.feedback p{margin:.3em 0}
+.progress{height:14px;background:var(--soft);border-radius:8px;overflow:hidden;margin:6px 0 14px}
+.progress div{height:100%;background:var(--accent);transition:width .3s}
+.toprow{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;gap:8px;flex-wrap:wrap}
+.stars{font-size:1.1rem;letter-spacing:.1em}
+.result{text-align:center}
+.result .score{font-size:2.4rem;font-weight:700;color:var(--accent)}
+.recap{list-style:none;padding:0;text-align:left}
+.recap li{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 12px;margin:6px 0;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+table.memo{width:100%;border-collapse:separate;border-spacing:0 8px}
+table.memo td{background:#fff;border:2px solid var(--line);padding:8px 12px;vertical-align:top}
+table.memo td:first-child{border-radius:12px 0 0 12px;font-weight:700;width:34%;border-right:none}
+table.memo td:last-child{border-radius:0 12px 12px 0}
+.check label{display:flex;gap:12px;align-items:flex-start;background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 12px;margin:6px 0;cursor:pointer}
+.check input{width:26px;height:26px;flex-shrink:0;margin-top:4px;accent-color:var(--ok)}
+details{background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 14px;margin-top:16px;font-size:.85rem}
+summary{cursor:pointer;font-weight:600}
+footer{text-align:center;font-size:.7rem;color:#777;margin-top:30px}
+@media print{
+  header .settings,nav,.btn,.say,details,footer{display:none!important}
+  .panel{display:none!important} #p-memo{display:block!important}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌡️ Les nombres relatifs</h1>
+  <p>5e – cours simplifié, exercices et évaluation blanche</p>
+  <div class="settings">
+    <button id="fsMinus" aria-label="Texte plus petit">A −</button>
+    <button id="fsPlus" aria-label="Texte plus grand">A +</button>
+    <button id="spaceBtn">↔ Texte espacé</button>
+    <button id="autoBtn">🔊 Lecture auto</button>
+  </div>
+</header>
+
+<div class="wrap">
+<nav>
+  <button data-tab="cours" class="active">📘<br>Comprendre</button>
+  <button data-tab="train">✏️<br>S’entraîner</button>
+  <button data-tab="eval">🎯<br>Évaluation</button>
+  <button data-tab="memo">📋<br>Fiche mémo</button>
+</nav>
+
+<!-- COURS -->
+<section class="panel active" id="p-cours">
+  <div class="dots" id="dots"></div>
+  <div class="card" id="fiche"></div>
+  <div class="fnav">
+    <button class="btn light" id="prevF">⬅ Précédent</button>
+    <button class="btn" id="nextF">Suivant ➜</button>
+  </div>
+</section>
+
+<!-- ENTRAINEMENT -->
+<section class="panel" id="p-train">
+  <div id="trainHost"></div>
+</section>
+
+<!-- EVALUATION -->
+<section class="panel" id="p-eval">
+  <div id="evalHost"></div>
+</section>
+
+<!-- MEMO -->
+<section class="panel" id="p-memo">
+  <div class="card">
+    <h2>📋 Ma fiche mémo</h2>
+    <table class="memo">
+      <tr><td>Nombre relatif</td><td>Un <b>signe</b> (+ ou −) et une <b>valeur absolue</b>.<br>Exemple : <span class="num neg">−4</span> → signe −, valeur absolue 4.</td></tr>
+      <tr><td>Valeur absolue</td><td>La distance jusqu’à 0. Elle n’a jamais de signe −.</td></tr>
+      <tr><td>Négatif / positif</td><td><span class="num neg">Négatif</span> : signe −, à gauche de 0.<br><span class="num pos">Positif</span> : signe + (souvent pas écrit), à droite de 0.<br><span class="num zero">0</span> : pas de signe, il est les deux.</td></tr>
+      <tr><td>Abscisse</td><td>Le nombre qui repère un point sur une droite graduée.<br>On écrit : A(4) ; B(−5).</td></tr>
+      <tr><td>Opposé</td><td>Je change seulement le signe : 4,5 ↔ −4,5.<br>Les deux points sont symétriques par rapport à O.</td></tr>
+      <tr><td>Comparer</td><td>Le plus grand est <b>le plus à droite</b>.<br>• Un négatif est toujours plus petit qu’un positif.<br>• Deux négatifs : le plus grand a la plus <b>petite</b> valeur absolue (−2 &gt; −5).<br>🐊 La bouche ouverte mange le plus grand : 3 &lt; 7.</td></tr>
+      <tr><td>Coordonnées</td><td>(abscisse ; ordonnée)<br>1) ← → sur l’axe horizontal 2) ↑ ↓ sur l’axe vertical.<br>« D’abord le couloir, ensuite l’ascenseur. »</td></tr>
+    </table>
+    <button class="btn" onclick="window.print()">🖨️ Imprimer la fiche</button>
+  </div>
+
+  <div class="card check">
+    <h2>✅ Avant l’évaluation, je sais…</h2>
+    <label><input type="checkbox">donner le signe et la valeur absolue d’un nombre</label>
+    <label><input type="checkbox">dire si un nombre est positif ou négatif</label>
+    <label><input type="checkbox">lire l’abscisse d’un point sur une droite graduée</label>
+    <label><input type="checkbox">placer un point sur une droite graduée</label>
+    <label><input type="checkbox">trouver l’opposé d’un nombre</label>
+    <label><input type="checkbox">comparer deux nombres avec &lt; ou &gt;</label>
+    <label><input type="checkbox">ranger des nombres du plus petit au plus grand</label>
+    <label><input type="checkbox">lire et placer un point avec ses coordonnées</label>
+  </div>
+
+  <details>
+    <summary>👨‍👩‍👦 Pour l’adulte qui accompagne</summary>
+    <ul>
+      <li>Préférer 10 minutes par jour plutôt qu’une longue séance la veille.</li>
+      <li>Utiliser le bouton 🔊 : il lit les consignes à voix haute.</li>
+      <li>Il n’y a pas de chronomètre : laisser le temps de poser le doigt sur la droite graduée.</li>
+      <li>Les couleurs sont toujours les mêmes : <span class="num neg">bleu = négatif</span>, <span class="num pos">rouge = positif</span>, comme dans le cahier.</li>
+      <li>Après une erreur, faire relire l’explication à voix haute avant de passer à la suite.</li>
+    </ul>
+  </details>
+</section>
+
+<footer>Nombres relatifs – 5e · Version adaptée DYS</footer>
+</div>
+
+<script>
+/* ===================== OUTILS ===================== */
+const $ = (s, r = document) => r.querySelector(s);
+function h(tag, cls, html){ const e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+const pick = a => a[rand(0, a.length - 1)];
+function shuffle(a){ a = a.slice(); for(let i = a.length - 1; i > 0; i--){ const j = rand(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const nz = (a, b) => { let n; do { n = rand(a, b); } while(n === 0); return n; };
+const withHalf = (n, p = .35) => (n !== 0 && Math.random() < p) ? n + (n > 0 ? .5 : -.5) : n;
+const COL = { pos:'#c62828', neg:'#1d4ed8', zero:'#2e7d32', ok:'#2e7d32', grey:'#8a8a8a', pt:'#6d28d9' };
+const sgn = n => n > 0 ? 'pos' : n < 0 ? 'neg' : 'zero';
+function fmt(n, plus){ const s = String(Math.abs(n)).replace('.', ','); return n < 0 ? '−' + s : (n > 0 && plus ? '+' + s : s); }
+const fc = (n, plus) => `<span class="num ${sgn(n)}">${fmt(n, plus)}</span>`;
+const coord = (x, y) => `(${fc(x)} ; ${fc(y)})`;
+
+/* ===================== LECTURE AUDIO ===================== */
+function speakable(html){
+  const d = document.createElement('div'); d.innerHTML = html;
+  return d.textContent
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}️]/gu, '')
+    .replace(/(\d),(\d)/g, '$1 virgule $2')
+    .replace(/−\s?/g, 'moins ')
+    .replace(/\+\s?/g, 'plus ')
+    .replace(/</g, ' est plus petit que ')
+    .replace(/>/g, ' est plus grand que ')
+    .replace(/\(\s*/g, ' ').replace(/\s*;\s*/g, ' point-virgule ').replace(/\)/g, ' ')
+    .replace(/→|↔|➜|⬅|←|↑|↓/g, ', ');
+}
+function speak(t){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(t);
+  u.lang = 'fr-FR'; u.rate = .88;
+  const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.startsWith('fr'));
+  if(v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+
+/* ===================== STOCKAGE (léger) ===================== */
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem('relatifs5e_' + k)); } catch(e){ return null; } },
+  set(k, v){ try { localStorage.setItem('relatifs5e_' + k, JSON.stringify(v)); } catch(e){} }
+};
+
+/* ===================== DROITE GRADUÉE ===================== */
+function numberLine(o){
+  const min = o.min ?? -6, max = o.max ?? 6, W = 700, L = 40, R = 650, Y = 70;
+  const X = v => L + (v - min) / (max - min) * (R - L);
+  const step = (R - L) / (max - min);
+  const fs = (max - min) > 14 ? 14 : 18;
+  let s = `<svg viewBox="0 0 ${W} ${o.sides ? 150 : 120}" role="img" aria-label="Droite graduée">`;
+  if(o.sides){
+    s += `<rect x="${L-15}" y="118" width="${X(0)-L+15}" height="26" rx="8" fill="#dbe6ff"/>
+          <text x="${(L + X(0)) / 2}" y="137" text-anchor="middle" font-size="16" font-weight="700" fill="${COL.neg}">⬅ nombres négatifs</text>
+          <rect x="${X(0)}" y="118" width="${R+30-X(0)}" height="26" rx="8" fill="#ffe0e0"/>
+          <text x="${(X(0) + R + 30) / 2}" y="137" text-anchor="middle" font-size="16" font-weight="700" fill="${COL.pos}">nombres positifs ➜</text>`;
+  }
+  s += `<line x1="${L-15}" y1="${Y}" x2="${R+28}" y2="${Y}" stroke="#333" stroke-width="3"/>
+        <polygon points="${R+26},${Y-9} ${R+44},${Y} ${R+26},${Y+9}" fill="#333"/>`;
+  for(let v = min; v <= max; v++){
+    const x = X(v);
+    s += `<line x1="${x}" y1="${Y-10}" x2="${x}" y2="${Y+10}" stroke="#333" stroke-width="${v === 0 ? 4 : 2}"/>`;
+    const show = o.labels === '01' ? (v === 0 || v === 1) : true;
+    if(show) s += `<text x="${x}" y="${Y+34}" text-anchor="middle" font-size="${fs}" font-weight="${v===0?700:400}" fill="${COL[sgn(v)]}">${fmt(v)}</text>`;
+  }
+  (o.points || []).forEach(p => {
+    const x = X(p.v), c = p.color || COL[sgn(p.v)];
+    s += `<circle cx="${x}" cy="${Y}" r="9" fill="${c}" stroke="#fff" stroke-width="2"/>`;
+    if(p.name) s += `<text x="${x}" y="${Y-20}" text-anchor="middle" font-size="20" font-weight="700" fill="${c}">${p.name}</text>`;
+  });
+  if(o.click){
+    for(let v = min; v <= max; v++) s += `<rect class="hit" data-v="${v}" x="${X(v)-step/2}" y="${Y-38}" width="${step}" height="84" rx="8" fill="transparent"/>`;
+  }
+  s += '</svg>';
+  const wrap = h('div', 'svgwrap', s);
+  if(o.click) wrap.querySelectorAll('.hit').forEach(r => r.addEventListener('click', () => o.click(+r.dataset.v)));
+  return wrap;
+}
+
+/* ===================== REPÈRE DU PLAN ===================== */
+function plane(o){
+  const N = 5, S = 400, P = 22, c = (S - 2 * P) / (2 * N);
+  const X = x => P + (x + N) * c, Y = y => P + (N - y) * c;
+  let s = `<svg viewBox="0 0 ${S} ${S}" role="img" aria-label="Repère du plan">`;
+  for(let i = -N; i <= N; i++){
+    s += `<line x1="${X(i)}" y1="${Y(N)}" x2="${X(i)}" y2="${Y(-N)}" stroke="#e5dcc5" stroke-width="1.5"/>
+          <line x1="${X(-N)}" y1="${Y(i)}" x2="${X(N)}" y2="${Y(i)}" stroke="#e5dcc5" stroke-width="1.5"/>`;
+  }
+  s += `<line x1="${X(-N)}" y1="${Y(0)}" x2="${X(N)+12}" y2="${Y(0)}" stroke="#333" stroke-width="3"/>
+        <polygon points="${X(N)+10},${Y(0)-7} ${X(N)+20},${Y(0)} ${X(N)+10},${Y(0)+7}" fill="#333"/>
+        <line x1="${X(0)}" y1="${Y(-N)}" x2="${X(0)}" y2="${Y(N)-12}" stroke="#333" stroke-width="3"/>
+        <polygon points="${X(0)-7},${Y(N)-10} ${X(0)},${Y(N)-20} ${X(0)+7},${Y(N)-10}" fill="#333"/>`;
+  for(let i = -N; i <= N; i++){
+    if(i === 0) continue;
+    s += `<text x="${X(i)}" y="${Y(0)+18}" text-anchor="middle" font-size="13" fill="${COL[sgn(i)]}">${fmt(i)}</text>
+          <text x="${X(0)-7}" y="${Y(i)+5}" text-anchor="end" font-size="13" fill="${COL[sgn(i)]}">${fmt(i)}</text>`;
+  }
+  s += `<text x="${X(0)-8}" y="${Y(0)+18}" text-anchor="end" font-size="14" font-weight="700">O</text>`;
+  (o.points || []).forEach(p => {
+    const c2 = p.color || COL.pt, px = X(p.x), py = Y(p.y);
+    if(p.guide){
+      s += `<line x1="${px}" y1="${py}" x2="${px}" y2="${Y(0)}" stroke="${c2}" stroke-width="2.5" stroke-dasharray="6 5"/>
+            <line x1="${px}" y1="${py}" x2="${X(0)}" y2="${py}" stroke="${c2}" stroke-width="2.5" stroke-dasharray="6 5"/>`;
+    }
+    s += `<circle cx="${px}" cy="${py}" r="7" fill="${c2}" stroke="#fff" stroke-width="2"/>`;
+    if(p.name) s += `<text x="${px+9}" y="${py-9}" font-size="17" font-weight="700" fill="${c2}" stroke="#fff" stroke-width="4" paint-order="stroke">${p.name}</text>`;
+  });
+  if(o.click){
+    for(let x = -N; x <= N; x++) for(let y = -N; y <= N; y++)
+      s += `<circle class="hit" data-x="${x}" data-y="${y}" cx="${X(x)}" cy="${Y(y)}" r="${c*0.45}" fill="transparent"/>`;
+  }
+  s += '</svg>';
+  const wrap = h('div', 'svgwrap plane', s);
+  if(o.click) wrap.querySelectorAll('.hit').forEach(r => r.addEventListener('click', () => o.click(+r.dataset.x, +r.dataset.y)));
+  return wrap;
+}
+
+/* ===================== FICHES DE COURS ===================== */
+const FICHES = [
+ { e:'🔢', t:'Qu’est-ce qu’un nombre relatif ?',
+   html:`<div class="retiens"><span class="lab">Je retiens</span><br>Un nombre relatif, c’est :<br><b>un signe</b> (+ ou −) <b>+ une valeur absolue</b> (le nombre sans le signe).</div>
+   <div class="anat">
+     <div class="box"><div class="cells"><span class="num pos">+</span><span class="num pos">7</span></div><small><span>signe</span><span>valeur absolue</span></small></div>
+     <div class="box"><div class="cells"><span class="num neg">−</span><span class="num neg">4</span></div><small><span>signe</span><span>valeur absolue</span></small></div>
+   </div>
+   <p>${fc(7,true)} : le signe est +, la valeur absolue est 7.<br>${fc(-4)} : le signe est −, la valeur absolue est 4.</p>
+   <div class="astuce">💡 La valeur absolue, c’est <b>la distance jusqu’à 0</b>. Une distance n’est jamais négative !</div>`,
+   vis:() => numberLine({min:-6, max:8, points:[{v:7,name:'+7'},{v:-4,name:'−4'}]}) },
+
+ { e:'🌡️', t:'Positifs, négatifs… et le zéro',
+   html:`<div class="retiens"><span class="lab">Je retiens</span><br>
+   • Avec un signe <b class="num neg">−</b> : ce sont les nombres <b class="num neg">négatifs</b>. Ils sont <b>à gauche de 0</b>.<br>
+   • Avec un signe <b class="num pos">+</b> : ce sont les nombres <b class="num pos">positifs</b>. Ils sont <b>à droite de 0</b>.<br>
+   • <b class="num zero">0</b> n’a pas de signe. Il est à la fois positif et négatif.</div>
+   <div class="astuce">💡 On n’écrit pas toujours le + : <span class="num pos">+4</span> = <span class="num pos">4</span>.<br>🌡️ Comme sur un thermomètre : <span class="num neg">−3</span> °C, c’est en dessous de zéro.</div>`,
+   vis:() => numberLine({min:-6, max:6, sides:true}) },
+
+ { e:'📏', t:'Repérer un point sur une droite graduée',
+   html:`<div class="retiens"><span class="lab">Je retiens</span><br>Sur une droite graduée, chaque point est repéré par un nombre relatif : c’est <b>l’abscisse</b> du point.</div>
+   <p>L’abscisse de A est ${fc(4)}. L’abscisse de B est ${fc(-5)}.<br>On écrit : <b>A(${fc(4)})</b> et <b>B(${fc(-5)})</b>.</p>
+   <div class="methode"><b>Méthode</b><ol><li>Je trouve le <b>0</b>.</li><li>Je regarde le côté : à droite → positif, à gauche → négatif.</li><li>Je compte les graduations depuis 0.</li></ol></div>`,
+   vis:() => numberLine({min:-6, max:6, points:[{v:4,name:'A'},{v:-5,name:'B'}]}) },
+
+ { e:'🪞', t:'L’opposé d’un nombre',
+   html:`<div class="retiens"><span class="lab">Je retiens</span><br>Pour trouver l’opposé d’un nombre, je <b>change seulement son signe</b>.</div>
+   <p>L’opposé de ${fc(4.5)} est ${fc(-4.5)}.<br>L’opposé de ${fc(-2)} est ${fc(2)}.</p>
+   <div class="astuce">🪞 Deux points dont les abscisses sont opposées sont <b>symétriques par rapport à l’origine O</b> : même distance de 0, chacun d’un côté, comme dans un miroir.</div>`,
+   vis:() => numberLine({min:-6, max:6, points:[{v:-4.5,name:'A'},{v:0,name:'O',color:'#333'},{v:4.5,name:'B'}]}) },
+
+ { e:'⚖️', t:'Comparer des nombres relatifs',
+   html:`<div class="retiens"><span class="lab">Je retiens</span><br>Sur la droite graduée, <b>le plus grand est le plus à droite</b>.</div>
+   <p><b>1.</b> Deux positifs : le plus grand a la plus grande valeur absolue.<br>→ ${fc(4.5)} &lt; ${fc(6)}</p>
+   <p><b>2.</b> Un négatif est <b>toujours plus petit</b> qu’un positif.<br>→ ${fc(-3)} &lt; ${fc(4.5)}</p>
+   <p><b>3.</b> Deux négatifs : le plus grand a la plus <b>petite</b> valeur absolue.<br>→ ${fc(-5)} &lt; ${fc(-2)}</p>
+   <div class="astuce">🌡️ ${fc(-2)} °C, il fait moins froid que ${fc(-5)} °C. Donc ${fc(-2)} est plus grand.<br>🐊 &lt; veut dire « est plus petit que ». La bouche ouverte du crocodile mange <b>le plus grand</b>.</div>`,
+   vis:() => numberLine({min:-6, max:6, points:[{v:-5,name:'−5'},{v:-2,name:'−2'},{v:4.5,name:'4,5'}]}) },
+
+ { e:'🗺️', t:'Se repérer dans un plan',
+   html:`<div class="retiens"><span class="lab">Je retiens</span><br>Dans un repère, un point a <b>deux nombres</b> : ses <b>coordonnées</b>.<br><b>(abscisse ; ordonnée)</b><br>• L’abscisse se lit sur l’axe horizontal ← →.<br>• L’ordonnée se lit sur l’axe vertical ↑ ↓.</div>
+   <div class="astuce">🏢 « D’abord je marche dans le couloir (← →), ensuite je prends l’ascenseur (↑ ↓). »</div>
+   <p><b>C${coord(2,-3)}</b> : je pars de O, j’avance de 2 vers la droite, puis je descends de 3.</p>
+   <p>Les autres points : <b>B${coord(-3.5,0)}</b> et <b>D${coord(-3,1)}</b>.</p>`,
+   vis:() => plane({points:[{x:2,y:-3,name:'C',guide:true},{x:-3.5,y:0,name:'B'},{x:-3,y:1,name:'D',guide:true}]}) }
+];
+
+let fi = 0;
+function showFiche(i){
+  fi = i;
+  const f = FICHES[i], host = $('#fiche');
+  host.innerHTML = `<div class="fhead"><span>Fiche ${i+1} / ${FICHES.length}</span><button class="say">🔊 Écouter</button></div><h2>${f.e} ${f.t}</h2>`;
+  host.insertAdjacentHTML('beforeend', f.html);
+  host.insertBefore(f.vis(), host.querySelector('.retiens').nextSibling);
+  host.querySelector('.say').onclick = () => speak(speakable(f.t + '. ' + f.html));
+  if(autoRead) speak(speakable(f.t + '. ' + f.html));
+  $('#prevF').disabled = i === 0;
+  $('#nextF').textContent = i === FICHES.length - 1 ? 'Je m’entraîne ✏️' : 'Suivant ➜';
+  $('#dots').querySelectorAll('span').forEach((d, k) => d.classList.toggle('on', k === i));
+}
+FICHES.forEach((f, k) => { const d = h('span'); d.title = f.t; d.onclick = () => showFiche(k); $('#dots').appendChild(d); });
+$('#prevF').onclick = () => { if(fi > 0) { showFiche(fi - 1); window.scrollTo({top:0}); } };
+$('#nextF').onclick = () => { if(fi < FICHES.length - 1){ showFiche(fi + 1); window.scrollTo({top:0}); } else openTab('train'); };
+
+/* ===================== GÉNÉRATEURS D'EXERCICES ===================== */
+function opts(values){
+  const seen = new Set(), out = [];
+  values.forEach(v => { const k = String(v); if(!seen.has(k)){ seen.add(k); out.push({l:fc(v), v}); } });
+  return out;
+}
+function g_signe(){
+  const n = withHalf(nz(-9, 9));
+  return { type:'choice', text:`Quel est le <b>signe</b> du nombre ${fc(n,true)} ?`,
+    options:[{l:'+ (plus)', v:'+'}, {l:'− (moins)', v:'-'}], fixed:true, answer: n > 0 ? '+' : '-',
+    explain:`${fc(n,true)} : le signe est <b>${n>0?'+':'−'}</b>, la valeur absolue est ${fmt(Math.abs(n))}.` };
+}
+function g_va(){
+  const n = withHalf(nz(-9, 9)), a = Math.abs(n);
+  return { type:'choice', text:`Quelle est la <b>valeur absolue</b> de ${fc(n,true)} ?`,
+    options: opts([a, -a, a + 1]), answer: a,
+    explain:`La valeur absolue, c’est le nombre <b>sans son signe</b> (la distance jusqu’à 0). Pour ${fc(n,true)}, c’est ${fmt(a)}.` };
+}
+function g_posneg(){
+  const n = Math.random() < .2 ? 0 : withHalf(nz(-9, 9));
+  const ans = n > 0 ? 'p' : n < 0 ? 'n' : 'z';
+  const exp = { p:`${fc(n)} n’a pas de signe −, donc il est <b>positif</b> (à droite de 0).`,
+                n:`${fc(n)} a un signe −, donc il est <b>négatif</b> (à gauche de 0).`,
+                z:`<b>0</b> n’a pas de signe : il est à la fois positif et négatif.` };
+  return { type:'choice', text:`Le nombre ${fc(n)} est…`,
+    options:[{l:'positif',v:'p'},{l:'négatif',v:'n'},{l:'positif et négatif',v:'z'}], fixed:true, answer: ans, explain: exp[ans] };
+}
+function g_lire(){
+  const a = withHalf(nz(-5, 5), .25), lab = Math.random() < .5 ? '01' : 'all';
+  const d = a + (Math.random() < .5 ? 1 : -1);
+  return { type:'choice', text:`Quelle est l’<b>abscisse</b> du point A ?`,
+    visual:() => numberLine({min:-6, max:6, labels:lab, points:[{v:a, name:'A', color:COL.pt}]}),
+    options: opts([a, -a, d === 0 ? a + 2 * Math.sign(a) : d]), answer: a,
+    explain:`Je pars de 0. A est à ${fmt(Math.abs(a))} graduation${Math.abs(a)>1?'s':''} vers la <b>${a>0?'droite':'gauche'}</b>${a<0?', donc son abscisse est négative':''}. Donc <b>A(${fc(a)})</b>.` };
+}
+function g_placer(){
+  const a = nz(-6, 6), lab = Math.random() < .5 ? '01' : 'all';
+  return { type:'line', min:-6, max:6, labels:lab, answer:a,
+    text:`Touche la graduation qui a pour abscisse ${fc(a)}.`,
+    explain:`${fc(a)} est ${a>0?'<b>positif</b> : il est à droite':'<b>négatif</b> : il est à gauche'} de 0, à ${Math.abs(a)} graduation${Math.abs(a)>1?'s':''}.` };
+}
+function g_oppose(){
+  const n = withHalf(nz(-9, 9)), o = -n;
+  return { type:'choice', text:`Quel est l’<b>opposé</b> de ${fc(n)} ?`,
+    options: opts([o, n, o + Math.sign(o)]), answer: o,
+    explain:`Je change seulement le signe : l’opposé de ${fc(n)} est ${fc(o)}.` };
+}
+function g_sym(){
+  const a = withHalf(nz(-5, 5), .25), o = -a;
+  return { type:'choice', text:`B est le <b>symétrique</b> de A par rapport à O. Quelle est l’abscisse de B ?`,
+    visual:() => numberLine({min:-6, max:6, points:[{v:a, name:'A', color:COL.pt},{v:0,name:'O',color:'#333'}]}),
+    options: opts([o, a, o + Math.sign(o)]), answer: o,
+    explain:`B est à la même distance de 0 que A, mais de l’autre côté. Son abscisse est l’opposé : <b>B(${fc(o)})</b>.` };
+}
+function g_comp(){
+  const k = Math.random(); let a, b;
+  do {
+    if(k < .4){ a = -rand(1, 9); b = -rand(1, 9); }
+    else if(k < .7){ a = -rand(1, 9); b = rand(0, 9); if(Math.random() < .5) [a, b] = [b, a]; }
+    else { a = rand(0, 9); b = rand(1, 9); }
+    if(Math.random() < .25) a = withHalf(a, 1);
+  } while(a === b);
+  const sym = a < b ? '<' : '>';
+  let rule;
+  if(a < 0 && b < 0) rule = 'Les deux sont négatifs : le plus grand est celui qui a la plus <b>petite</b> valeur absolue.';
+  else if((a < 0) !== (b < 0)) rule = 'Un nombre négatif est <b>toujours plus petit</b> qu’un nombre positif.';
+  else rule = 'Les deux sont positifs : le plus grand a la plus grande valeur absolue.';
+  return { type:'choice', text:`Quel symbole faut-il mettre ?<div class="big">${fc(a)} <span class="blank">?</span> ${fc(b)}</div>`,
+    say: `Quel symbole faut-il mettre entre ${speakable(fmt(a))} et ${speakable(fmt(b))} ?`,
+    options:[{l:'&lt; <small>(plus petit que)</small>', v:'<'}, {l:'&gt; <small>(plus grand que)</small>', v:'>'}], fixed:true, answer: sym,
+    explain:`${rule}<br><b>${fc(a)} ${sym === '<' ? '&lt;' : '&gt;'} ${fc(b)}</b> (le plus grand est le plus à droite).`,
+    after:() => numberLine({min:-10, max:10, points:[{v:a, name:fmt(a)},{v:b, name:fmt(b)}]}) };
+}
+function g_ranger(){
+  let items;
+  do {
+    const s = new Set([-rand(1, 9), -rand(1, 9)]);
+    while(s.size < 4) s.add(rand(-9, 9));
+    items = [...s];
+  } while(items.length !== 4);
+  const sorted = items.slice().sort((x, y) => x - y);
+  return { type:'order', items: shuffle(items), answer: sorted,
+    text:`Range ces nombres du <b>plus petit</b> au <b>plus grand</b>. Touche-les dans l’ordre.`,
+    explain:`Les négatifs d’abord (le plus loin de 0 est le plus petit), puis les positifs :<br><b>${sorted.map(v => fc(v)).join(' &lt; ')}</b>`,
+    after:() => numberLine({min:-10, max:10, points: sorted.map(v => ({v, name:fmt(v)}))}) };
+}
+function g_ao(){
+  let x, y; do { x = nz(-5, 5); y = nz(-5, 5); } while(x === y || x === -y);
+  const askX = Math.random() < .5;
+  return { type:'choice', text:`Le point M a pour coordonnées <b>${coord(x, y)}</b>.<br>Quelle est son <b>${askX ? 'abscisse' : 'ordonnée'}</b> ?`,
+    options: opts([x, y, askX ? -x : -y]), answer: askX ? x : y,
+    explain:`(abscisse ; ordonnée) : l’abscisse est le <b>1er</b> nombre (${fc(x)}), l’ordonnée est le <b>2e</b> (${fc(y)}).` };
+}
+function walk(x, y){
+  const a = x === 0 ? 'je ne bouge pas sur l’axe horizontal' : `j’avance de ${fmt(Math.abs(x))} vers la <b>${x>0?'droite':'gauche'}</b>`;
+  const b = y === 0 ? 'je ne monte pas et je ne descends pas' : `je <b>${y>0?'monte':'descends'}</b> de ${fmt(Math.abs(y))}`;
+  return `Je pars de O : ${a}, puis ${b}.`;
+}
+function g_clire(){
+  let x, y; do { x = rand(-4, 4); y = rand(-4, 4); } while(x === y || (x === 0 && y === 0));
+  const third = x !== 0 ? `${-x};${y}` : `${x};${-y}`;
+  const [tx, ty] = third.split(';').map(Number);
+  const raw = [[x, y], [y, x], [tx, ty]], seen = new Set(), options = [];
+  raw.forEach(([p, q]) => { const k = p + ';' + q; if(!seen.has(k)){ seen.add(k); options.push({l:coord(p, q), v:k}); } });
+  return { type:'choice', text:`Quelles sont les <b>coordonnées</b> du point P ?`,
+    visual:() => plane({points:[{x, y, name:'P'}]}), options, answer:`${x};${y}`,
+    explain:`${walk(x, y)} Donc <b>P${coord(x, y)}</b>. Attention à l’ordre : d’abord l’abscisse, ensuite l’ordonnée.`,
+    after:() => plane({points:[{x, y, name:'P', guide:true}]}) };
+}
+function g_cplacer(){
+  let x, y; do { x = rand(-4, 4); y = rand(-4, 4); } while(x === 0 && y === 0);
+  return { type:'plane', ax:x, ay:y, text:`Touche l’endroit où se trouve le point <b>M${coord(x, y)}</b>.`,
+    explain:`${walk(x, y)}` };
+}
+
+/* ===================== MOTEUR DE QUESTIONS ===================== */
+let autoRead = false;
+const BRAVO = ['Bravo ! ✅', 'Super, c’est juste ! ✅', 'Excellent ! ✅', 'Tu as trouvé ! ✅'];
+const OUPS = ['Pas tout à fait… on regarde ensemble 👀', 'Presque ! Lis l’explication 👀', 'Ce n’est pas grave, on apprend en se trompant 👀'];
+
+function ask(host, q, done){
+  host.innerHTML = '';
+  const say = q.say || speakable(q.text);
+  const card = h('div', 'qcard'), head = h('div', 'qhead');
+  head.appendChild(h('div', 'qtext', q.text));
+  const sb = h('button', 'say', '🔊'); sb.title = 'Écouter la consigne'; sb.onclick = () => speak(say);
+  head.appendChild(sb); card.appendChild(head);
+  const zone = h('div'); card.appendChild(zone);
+  const fb = h('div', 'feedback'); card.appendChild(fb);
+  host.appendChild(card);
+  if(autoRead) speak(say);
+  let locked = false;
+
+  const finish = (ok, extra) => {
+    if(locked) return; locked = true;
+    fb.className = 'feedback ' + (ok ? 'ok' : 'ko');
+    fb.innerHTML = `<p class="fbtitle">${ok ? pick(BRAVO) : pick(OUPS)}</p><p>${q.explain}</p>`;
+    if(extra) fb.appendChild(extra); else if(q.after) fb.appendChild(q.after());
+    const rs = h('button', 'say', '🔊 Écouter l’explication'); rs.onclick = () => speak(speakable(q.explain)); fb.appendChild(rs);
+    const nb = h('button', 'btn next', 'Question suivante ➜'); nb.onclick = () => done(ok);
+    fb.appendChild(h('br')); fb.appendChild(nb);
+    if(autoRead) speak(speakable((ok ? 'Bravo. ' : '') + q.explain));
+    setTimeout(() => fb.scrollIntoView({behavior:'smooth', block:'nearest'}), 50);
+  };
+
+  if(q.type === 'choice'){
+    if(q.visual) zone.appendChild(q.visual());
+    const box = h('div', 'choices');
+    (q.fixed ? q.options : shuffle(q.options)).forEach(op => {
+      const b = h('button', 'choice', op.l); b.dataset.v = String(op.v);
+      b.onclick = () => {
+        if(locked) return;
+        const ok = String(op.v) === String(q.answer);
+        box.querySelectorAll('.choice').forEach(x => { x.disabled = true; if(x.dataset.v === String(q.answer)) x.classList.add('good'); });
+        if(!ok) b.classList.add('bad');
+        finish(ok);
+      };
+      box.appendChild(b);
+    });
+    zone.appendChild(box);
+  }
+  else if(q.type === 'line'){
+    const draw = (pts, click) => { zone.innerHTML = ''; zone.appendChild(numberLine({min:q.min, max:q.max, labels:q.labels, points:pts, click}));
+      if(click) zone.appendChild(h('p', 'hint', '👆 Touche la bonne graduation sur la droite.')); };
+    draw([], v => {
+      if(locked) return;
+      const ok = v === q.answer;
+      draw(ok ? [{v, name:'✓', color:COL.ok}] : [{v, name:'✗', color:COL.grey}, {v:q.answer, name:'✓', color:COL.ok}], null);
+      finish(ok);
+    });
+  }
+  else if(q.type === 'plane'){
+    const draw = (pts, click) => { zone.innerHTML = ''; zone.appendChild(plane({points:pts, click}));
+      if(click) zone.appendChild(h('p', 'hint', '👆 Touche un croisement de lignes.')); };
+    draw([], (x, y) => {
+      if(locked) return;
+      const ok = x === q.ax && y === q.ay;
+      draw(ok ? [{x, y, name:'M ✓', color:COL.ok, guide:true}]
+              : [{x, y, name:'✗', color:COL.grey}, {x:q.ax, y:q.ay, name:'M ✓', color:COL.ok, guide:true}], null);
+      finish(ok);
+    });
+  }
+  else if(q.type === 'order'){
+    const chosen = [];
+    const line = h('div', 'orderline', '<span class="hint">Tes nombres vont s’afficher ici…</span>');
+    const pool = h('div', 'choices');
+    const render = () => { line.innerHTML = chosen.length ? chosen.map(v => fc(v)).join(' <span class="lt">&lt;</span> ') : '<span class="hint">Tes nombres vont s’afficher ici…</span>'; };
+    q.items.forEach(n => {
+      const b = h('button', 'choice', fc(n));
+      b.onclick = () => {
+        if(locked || b.disabled) return;
+        chosen.push(n); b.disabled = true; b.style.opacity = .35; render();
+        if(chosen.length === q.items.length){
+          const ok = chosen.every((v, i) => v === q.answer[i]);
+          line.style.borderColor = ok ? COL.ok : '#a16207'; reset.disabled = true;
+          finish(ok);
+        }
+      };
+      pool.appendChild(b);
+    });
+    const reset = h('button', 'btn light', '↺ Effacer');
+    reset.onclick = () => { if(locked) return; chosen.length = 0; pool.querySelectorAll('.choice').forEach(b => { b.disabled = false; b.style.opacity = 1; }); render(); };
+    zone.appendChild(pool); zone.appendChild(line); zone.appendChild(reset);
+  }
+}
+
+/* ===================== ENTRAÎNEMENT ===================== */
+const SECTIONS = [
+  {id:'signe',    e:'➕➖', t:'Signe et valeur absolue',          g:[g_signe, g_va, g_posneg]},
+  {id:'droite',   e:'📏', t:'Lire et placer sur une droite',     g:[g_lire, g_placer]},
+  {id:'oppose',   e:'🪞', t:'L’opposé d’un nombre',              g:[g_oppose, g_sym]},
+  {id:'comparer', e:'⚖️', t:'Comparer et ranger',                g:[g_comp, g_comp, g_ranger]},
+  {id:'plan',     e:'🗺️', t:'Coordonnées dans un repère',        g:[g_ao, g_clire, g_cplacer]},
+];
+const NB = 6;
+
+function trainMenu(){
+  const host = $('#trainHost'); host.innerHTML = '';
+  host.appendChild(h('h2', '', '✏️ Je choisis ce que je veux travailler'));
+  host.appendChild(h('p', 'hint', 'Chaque série a 6 questions. Pas de chrono : prends ton temps.'));
+  const m = h('div', 'menu');
+  SECTIONS.forEach(s => {
+    const best = store.get('best_' + s.id);
+    const b = h('button', 'mitem', `<span class="e">${s.e}</span><b>${s.t}</b><small>${best != null ? 'Meilleur score : ' + best + ' / ' + NB : 'Pas encore fait'}</small>`);
+    b.onclick = () => trainRun(s);
+    m.appendChild(b);
+  });
+  host.appendChild(m);
+}
+
+function trainRun(s){
+  const host = $('#trainHost');
+  let i = 0, score = 0, stars = '';
+  const order = Array.from({length:NB}, (_, k) => s.g[k % s.g.length]);
+  const plan = shuffle(order);
+  const next = () => {
+    if(i >= NB) return trainEnd(s, score);
+    host.innerHTML = `<div class="toprow"><b>${s.e} ${s.t}</b><span>Question ${i+1} / ${NB}</span></div>
+      <div class="progress"><div style="width:${i / NB * 100}%"></div></div><div class="stars">${stars || '&nbsp;'}</div>`;
+    const qh = h('div'); host.appendChild(qh);
+    const back = h('button', 'btn light', '⬅ Retour au menu'); back.onclick = trainMenu; host.appendChild(back);
+    ask(qh, plan[i](), ok => { if(ok){ score++; stars += '⭐'; } else stars += '▫️'; i++; next(); window.scrollTo({top:0}); });
+  };
+  next();
+}
+
+function trainEnd(s, score){
+  const best = store.get('best_' + s.id);
+  if(best == null || score > best) store.set('best_' + s.id, score);
+  const msg = score === NB ? 'Parfait ! Tu maîtrises 🏆' : score >= 4 ? 'Très bien ! Encore une série pour être sûr 💪' : 'Relis la fiche de cours, puis réessaie. Tu vas y arriver 🌱';
+  $('#trainHost').innerHTML = `<div class="card result"><h2>${s.e} ${s.t}</h2><div class="score">${score} / ${NB}</div><p>${msg}</p></div>`;
+  const b1 = h('button', 'btn', '↺ Une autre série'); b1.onclick = () => trainRun(s);
+  const b2 = h('button', 'btn light', '📘 Revoir le cours'); b2.onclick = () => openTab('cours');
+  const b3 = h('button', 'btn light', '⬅ Menu'); b3.onclick = trainMenu;
+  const c = $('#trainHost .card'); c.appendChild(b1); c.appendChild(b2); c.appendChild(b3);
+}
+
+/* ===================== ÉVALUATION BLANCHE ===================== */
+const EVAL = [
+  ['signe', g_signe], ['signe', g_va], ['signe', g_posneg],
+  ['droite', g_lire], ['droite', g_placer],
+  ['oppose', g_oppose], ['oppose', g_sym],
+  ['comparer', g_comp], ['comparer', g_comp], ['comparer', g_ranger],
+  ['plan', g_clire], ['plan', g_cplacer]
+];
+function evalIntro(){
+  const last = store.get('eval_last');
+  $('#evalHost').innerHTML = `<div class="card"><h2>🎯 Évaluation blanche</h2>
+    <p>${EVAL.length} questions sur tout le chapitre, comme le jour du contrôle.</p>
+    <p>✔ Pas de chrono.<br>✔ Le bouton 🔊 lit les consignes.<br>✔ À la fin, tu sais ce qu’il faut revoir.</p>
+    ${last ? `<p class="hint">Dernier essai : ${last} / 20</p>` : ''}</div>`;
+  const b = h('button', 'btn', 'Je commence ➜'); b.onclick = evalRun;
+  $('#evalHost .card').appendChild(b);
+}
+function evalRun(){
+  const host = $('#evalHost'), res = [];
+  let i = 0;
+  const next = () => {
+    if(i >= EVAL.length) return evalEnd(res);
+    host.innerHTML = `<div class="toprow"><b>🎯 Évaluation blanche</b><span>Question ${i+1} / ${EVAL.length}</span></div>
+      <div class="progress"><div style="width:${i / EVAL.length * 100}%"></div></div>`;
+    const qh = h('div'); host.appendChild(qh);
+    ask(qh, EVAL[i][1](), ok => { res.push([EVAL[i][0], ok]); i++; next(); window.scrollTo({top:0}); });
+  };
+  next();
+}
+function evalEnd(res){
+  const ok = res.filter(r => r[1]).length, note = Math.round(ok / res.length * 20 * 2) / 2;
+  store.set('eval_last', String(note).replace('.', ','));
+  const msg = note >= 16 ? 'Tu es prêt pour l’évaluation ! 🏆' : note >= 10 ? 'C’est bien ! Revois les notions marquées 🔁 👇' : 'On reprend tranquillement les notions marquées 🔁, puis tu refais l’évaluation 🌱';
+  const host = $('#evalHost');
+  host.innerHTML = `<div class="card result"><h2>Résultat</h2><div class="score">${String(note).replace('.', ',')} / 20</div>
+    <p>${ok} bonne${ok>1?'s':''} réponse${ok>1?'s':''} sur ${res.length}</p><p>${msg}</p><ul class="recap"></ul></div>`;
+  const ul = host.querySelector('.recap');
+  SECTIONS.forEach(s => {
+    const r = res.filter(x => x[0] === s.id), g = r.filter(x => x[1]).length;
+    const li = h('li', '', `<span>${g === r.length ? '✅' : '🔁'} ${s.e} ${s.t} : ${g} / ${r.length}</span>`);
+    if(g < r.length){ const b = h('button', 'btn light', 'M’entraîner'); b.style.margin = 0; b.onclick = () => { openTab('train'); trainRun(s); }; li.appendChild(b); }
+    ul.appendChild(li);
+  });
+  const again = h('button', 'btn', '↺ Refaire une évaluation'); again.onclick = evalRun;
+  host.querySelector('.card').appendChild(again);
+}
+
+/* ===================== ONGLETS & RÉGLAGES ===================== */
+function openTab(t){
+  document.querySelectorAll('nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'p-' + t));
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  if(t === 'train') trainMenu();
+  if(t === 'eval') evalIntro();
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => openTab(b.dataset.tab));
+
+let fs = store.get('fs') || 20;
+const applyFs = () => document.documentElement.style.setProperty('--fs', fs + 'px');
+$('#fsMinus').onclick = () => { fs = Math.max(16, fs - 2); applyFs(); store.set('fs', fs); };
+$('#fsPlus').onclick = () => { fs = Math.min(30, fs + 2); applyFs(); store.set('fs', fs); };
+$('#spaceBtn').onclick = e => { const on = document.body.classList.toggle('spacious'); e.currentTarget.classList.toggle('on', on); store.set('sp', on); };
+$('#autoBtn').onclick = e => { autoRead = !autoRead; e.currentTarget.classList.toggle('on', autoRead); store.set('auto', autoRead); if(!autoRead && 'speechSynthesis' in window) speechSynthesis.cancel(); };
+if(store.get('sp')){ document.body.classList.add('spacious'); $('#spaceBtn').classList.add('on'); }
+if(store.get('auto')){ autoRead = true; $('#autoBtn').classList.add('on'); }
+applyFs();
+if('speechSynthesis' in window) speechSynthesis.getVoices();
+showFiche(0);
+</script>
+</body>
+</html>
